@@ -30,7 +30,7 @@ inline fun SpannableStringBuilder.bold(start: Int? = null, end: Int? = null, tex
 inline fun SpannableStringBuilder.italic(start: Int? = null, end: Int? = null, text: () -> CharSequence) =
         span(text(), StyleSpan(Typeface.ITALIC), start, end)
 
-fun SpannableStringBuilder.click(start: Int? = null, end: Int? = null, click: (View) -> Unit, text: () -> CharSequence) =
+fun SpannableStringBuilder.click(click: (View) -> Unit, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
         span(text(), object : ClickableSpan() {
             override fun onClick(p0: View) {
                 click(p0)
