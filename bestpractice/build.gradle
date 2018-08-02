@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    def deps = rootProject.ext.dependencies
+    api deps.kotlin
+
+    api deps.appcompat_v7
+    api deps.cardview
+    api deps.recyclerview
+    api deps.design
+    api deps.exifinterface
+    api deps.support_annotations
+    api deps.constraint_layout
+    api deps.lifecycle_extensions
+
+    api deps.rxpermissions
+
+    api deps.anko_commons
+    api deps.anko_appcompat_v7_commons
+    api deps.anko_design
+
+    api deps.rxJava
+    api deps.rxKotlin
+    api deps.rxAndroid
+    api deps.rxlifecycle_components
+    api deps.rxlifecycle_kotlin
+}
+repositories {
+    mavenCentral()
+}
