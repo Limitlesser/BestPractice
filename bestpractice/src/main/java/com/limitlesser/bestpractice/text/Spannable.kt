@@ -6,49 +6,47 @@ import android.text.SpannableStringBuilder
 import android.text.style.*
 import android.view.View
 
-inline fun span(init: SpannableStringBuilderExt.() -> Unit): SpannableStringBuilder {
-    return SpannableStringBuilderExt().apply(init)
+inline fun span(init: SpannableContext.() -> SpannableStringBuilder): SpannableStringBuilder {
+    return SpannableContext().run(init)
 }
 
-fun SpannableStringBuilder.span(text: CharSequence, span: Any, start: Int? = null, end: Int? = null): SpannableStringBuilder {
-    val preStart = length
-    if (text != this) append(text)
-    setSpan(span, preStart + (start ?: 0), preStart + (end ?: text.length),
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-    return this
-}
+class SpannableContext {
 
-inline fun SpannableStringBuilder.color(color: Int, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), ForegroundColorSpan(color), start, end)
+    fun span(span: Any, start: Int? = null, end: Int? = null, text: CharSequence): SpannableStringBuilder {
+        val str = SpannableStringBuilder.valueOf(text)
+        str.setSpan(span, start ?: 0, end ?: str.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return str
+    }
 
-inline fun SpannableStringBuilder.background(color: Int, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), BackgroundColorSpan(color), start, end)
+    inline fun color(color: Int, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(ForegroundColorSpan(color), start, end, text())
 
-inline fun SpannableStringBuilder.bold(start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), StyleSpan(Typeface.BOLD), start, end)
+    inline fun background(color: Int, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(BackgroundColorSpan(color), start, end, text())
 
-inline fun SpannableStringBuilder.italic(start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), StyleSpan(Typeface.ITALIC), start, end)
+    inline fun bold(start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(StyleSpan(Typeface.BOLD), start, end, text())
 
-fun SpannableStringBuilder.click(click: (View) -> Unit, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), object : ClickableSpan() {
-            override fun onClick(p0: View) {
-                click(p0)
-            }
-        }, start, end)
+    inline fun italic(start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(StyleSpan(Typeface.ITALIC), start, end, text())
 
-fun SpannableStringBuilder.url(url: String, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
-        span(text(), URLSpan(url), start, end)
+    fun click(click: (View) -> Unit, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(object : ClickableSpan() {
+                override fun onClick(p0: View) {
+                    click(p0)
+                }
+            }, start, end, text())
 
-
-class SpannableStringBuilderExt : SpannableStringBuilder() {
+    fun url(url: String, start: Int? = null, end: Int? = null, text: () -> CharSequence) =
+            span(URLSpan(url), start, end, text())
 
     operator fun SpannableStringBuilder.plus(other: CharSequence): SpannableStringBuilder {
-        return if (this == other) this else append(other)
+        append(other)
+        return this
     }
 
     operator fun CharSequence.unaryPlus(): SpannableStringBuilder {
-        return append(this)
+        return SpannableStringBuilder.valueOf(this)
     }
 
 }
